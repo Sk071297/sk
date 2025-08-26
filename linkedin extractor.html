@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>LinkedIn Post Date Extractor</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: "Segoe UI", Roboto, Arial, sans-serif;
+      background: linear-gradient(135deg, #3a7bd5, #3a6073);
+      color: #fff;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-start;
+      min-height: 100vh;
+      padding: 2em;
+    }
+
+    h1 {
+      font-size: 2em;
+      margin-bottom: 0.5em;
+      text-align: center;
+      color: #fdfdfd;
+    }
+
+    .container {
+      background: rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(6px);
+      padding: 20px 30px;
+      border-radius: 12px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+      max-width: 600px;
+      width: 100%;
+    }
+
+    .form {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 1.5em;
+    }
+
+    input[type="text"] {
+      flex: 1;
+      padding: 10px;
+      border-radius: 6px;
+      border: none;
+      font-size: 16px;
+    }
+
+    button {
+      background: #ff9800;
+      color: white;
+      padding: 10px 16px;
+      border: none;
+      border-radius: 6px;
+      font-size: 16px;
+      cursor: pointer;
+      transition: background 0.3s ease;
+    }
+
+    button:hover {
+      background: #e68900;
+    }
+
+    .output {
+      font-size: 16px;
+      line-height: 1.8;
+      color: #fefefe;
+    }
+
+    .output span.label {
+      font-weight: bold;
+      color: #ffd54f;
+    }
+
+    footer {
+      margin-top: 2em;
+      font-size: 14px;
+      opacity: 0.7;
+    }
+  </style>
+</head>
+<body>
+  <h1>LinkedIn Post Date Extractor</h1>
+  <div class="container">
+    <div class="form">
+      <input type="text" id="url" name="url" placeholder="Paste LinkedIn Post or Comment URL here..." />
+      <button onclick="getDate()">Extract</button>
+      <button onclick="clearUrlField()">Clear</button>
+    </div>
+    <div class="output">
+      <p><span class="label">Uploaded on (Local): </span><span id="localtime"></span></p>
+      <p><span class="label">Eastern Time (ET): </span><span id="ettime"></span></p>
+    </div>
+  </div>
+
+  <script>
+    function getPostId() {
+      const linkedinURL = document.querySelector("#url").value;
+      const regex = /([0-9]{19})/;
+      return regex.exec(linkedinURL)?.pop();
+    }
+
+    function getCommentId() {
+      const linkedinURL = decodeURIComponent(document.querySelector("#url").value);
+      const regex = /fsd_comment:\((\d+),urn:li:activity:\d+\)/;
+      const match = regex.exec(linkedinURL);
+      return match ? match[1] : null;
+    }
+
+    function extractUnixTimestamp(postId) {
+      if (!postId) return "";
+      const asBinary = BigInt(postId).toString(2);
+      const first41Chars = asBinary.slice(0, 41);
+      return parseInt(first41Chars, 2);
+    }
+
+    function unixTimestampToLocalDate(timestamp) {
+      const dateObject = new Date(timestamp);
+      return dateObject.toString().substring(0, 25);
+    }
+
+    function unixTimestampToETDate(timestamp) {
+      if (!timestamp) return "";
+      const dateObject = new Date(timestamp);
+      return dateObject.toLocaleString("en-US", {
+        timeZone: "America/New_York",
+        timeZoneName: "short"
+      });
+    }
+
+    function getDate() {
+      const postId = getPostId();
+      const commentId = getCommentId();
+
+      let unixTimestamp = commentId
+        ? extractUnixTimestamp(commentId)
+        : extractUnixTimestamp(postId);
+
+      document.querySelector("#localtime").textContent = unixTimestampToLocalDate(unixTimestamp);
+      document.querySelector("#ettime").textContent = unixTimestampToETDate(unixTimestamp);
+    }
+
+    function clearUrlField() {
+      document.querySelector("#url").value = "";
+      document.querySelector("#url").focus();
+      document.querySelector("#localtime").textContent = "";
+      document.querySelector("#ettime").textContent = "";
+    }
+  </script>
+</body>
+</html>
