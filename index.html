@@ -4,83 +4,127 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>LinkedIn Post Date Extractor</title>
-  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 640 640'%3E%3Cpath d='M512 96L127.9 96C110.3 96 96 110.5 96 128.3L96 511.7C96 529.5 110.3 544 127.9 544L512 544C529.6 544 544 529.5 544 511.7L544 128.3C544 110.5 529.6 96 512 96zM231.4 480L165 480L165 266.2L231.5 266.2L231.5 480L231.4 480zM198.2 160C219.5 160 236.7 177.2 236.7 198.5C236.7 219.8 219.5 237 198.2 237C176.9 237 159.7 219.8 159.7 198.5C159.7 177.2 176.9 160 198.2 160zM480.3 480L413.9 480L413.9 376C413.9 351.2 413.4 319.3 379.4 319.3C344.8 319.3 339.5 346.3 339.5 374.2L339.5 480L273.1 480L273.1 266.2L336.8 266.2L336.8 295.4L337.7 295.4C346.6 278.6 368.3 260.9 400.6 260.9C467.8 260.9 480.3 305.2 480.3 362.8L480.3 480z'/%3E%3C/svg%3E">
   <style>
     body {
       margin: 0;
       padding: 0;
       font-family: "Segoe UI", Roboto, Arial, sans-serif;
-      background: linear-gradient(135deg, #3a7bd5, #3a6073);
+      background: linear-gradient(270deg, #ff6ec7, #ff9800, #00e5ff, #7c4dff);
+      background-size: 800% 800%;
+      animation: gradientBG 15s ease infinite;
       color: #fff;
       display: flex;
       flex-direction: column;
       align-items: center;
-      justify-content: flex-start;
       min-height: 100vh;
       padding: 2em;
     }
 
+    @keyframes gradientBG {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+
     h1 {
-      font-size: 2em;
-      margin-bottom: 0.5em;
+      font-size: 2.5em;
+      margin-bottom: 1em;
       text-align: center;
-      color: #fdfdfd;
+      background: linear-gradient(90deg, #ffeb3b, #ff5722, #00e676);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      animation: glowText 2s infinite alternate;
+    }
+
+    @keyframes glowText {
+      from { text-shadow: 0 0 5px rgba(255,255,255,0.5); }
+      to { text-shadow: 0 0 20px rgba(255,255,255,0.9); }
     }
 
     .container {
-      background: rgba(255, 255, 255, 0.1);
-      backdrop-filter: blur(6px);
-      padding: 20px 30px;
-      border-radius: 12px;
-      box-shadow: 0 4px 15px rgba(0,0,0,0.2);
-      max-width: 600px;
+      background: rgba(0, 0, 0, 0.5);
+      backdrop-filter: blur(10px);
+      padding: 30px;
+      border-radius: 20px;
+      box-shadow: 0 0 20px rgba(255,255,255,0.2);
+      max-width: 700px;
       width: 100%;
+      animation: fadeIn 0.6s ease;
     }
 
     .form {
       display: flex;
-      gap: 10px;
-      margin-bottom: 1.5em;
+      gap: 12px;
+      margin-bottom: 1.8em;
     }
 
     input[type="text"] {
       flex: 1;
-      padding: 10px;
-      border-radius: 6px;
+      padding: 14px;
+      border-radius: 10px;
       border: none;
       font-size: 16px;
+      color: #fff;
+      background: rgba(255,255,255,0.15);
+      box-shadow: inset 0 0 8px rgba(255,255,255,0.2);
+      outline: none;
     }
 
     button {
-      background: #ff9800;
+      background: linear-gradient(135deg, #ff9800, #ff5722, #ff6ec7);
       color: white;
-      padding: 10px 16px;
+      padding: 12px 20px;
       border: none;
-      border-radius: 6px;
+      border-radius: 12px;
       font-size: 16px;
+      font-weight: bold;
       cursor: pointer;
-      transition: background 0.3s ease;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      box-shadow: 0 0 10px rgba(255, 87, 34, 0.6);
     }
 
     button:hover {
-      background: #e68900;
+      transform: scale(1.1);
+      box-shadow: 0 0 25px rgba(255, 87, 34, 0.9);
     }
 
     .output {
-      font-size: 16px;
-      line-height: 1.8;
-      color: #fefefe;
+      display: grid;
+      gap: 16px;
     }
 
-    .output span.label {
+    .card {
+      background: linear-gradient(135deg, #ff4081, #7c4dff, #00e5ff);
+      background-size: 300% 300%;
+      animation: cardBG 6s ease infinite;
+      padding: 18px 22px;
+      border-radius: 14px;
+      box-shadow: 0 0 15px rgba(255,255,255,0.3);
+      transition: transform 0.2s;
+    }
+
+    @keyframes cardBG {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+
+    .card:hover {
+      transform: translateY(-3px) scale(1.02);
+    }
+
+    .label {
       font-weight: bold;
-      color: #ffd54f;
+      font-size: 1.1em;
+      color: #fffde7;
+      display: block;
+      margin-bottom: 6px;
+      text-shadow: 0 0 6px rgba(255,255,255,0.7);
     }
 
-    footer {
-      margin-top: 2em;
-      font-size: 14px;
-      opacity: 0.7;
+    @keyframes fadeIn {
+      from {opacity: 0; transform: translateY(10px);}
+      to {opacity: 1; transform: translateY(0);}
     }
   </style>
 </head>
@@ -93,8 +137,14 @@
       <button onclick="clearUrlField()">Clear</button>
     </div>
     <div class="output">
-      <p><span class="label">Uploaded on (Local): </span><span id="localtime"></span></p>
-      <p><span class="label">Eastern Time (ET): </span><span id="ettime"></span></p>
+      <div class="card">
+        <span class="label">Uploaded on (Local):</span>
+        <span id="localtime"></span>
+      </div>
+      <div class="card">
+        <span class="label">Eastern Time (ET):</span>
+        <span id="ettime"></span>
+      </div>
     </div>
   </div>
 
@@ -119,27 +169,40 @@
       return parseInt(first41Chars, 2);
     }
 
+    function formatDate(date, timeZone) {
+      const options = {
+        weekday: "short",
+        year: "numeric",
+        month: "short",
+        day: "2-digit",
+        hour: "2-digit",
+        minute: "2-digit",
+        second: "2-digit",
+        hour12: true,
+        timeZone,
+        timeZoneName: timeZone === "America/New_York" ? "short" : undefined
+      };
+      return new Intl.DateTimeFormat("en-US", options).format(date);
+    }
+
     function unixTimestampToLocalDate(timestamp) {
       const dateObject = new Date(timestamp);
-      return dateObject.toString().substring(0, 25);
+      return formatDate(dateObject, Intl.DateTimeFormat().resolvedOptions().timeZone);
     }
 
     function unixTimestampToETDate(timestamp) {
-      if (!timestamp) return "";
       const dateObject = new Date(timestamp);
-      return dateObject.toLocaleString("en-US", {
-        timeZone: "America/New_York",
-        timeZoneName: "short"
-      });
+      return formatDate(dateObject, "America/New_York");
     }
 
     function getDate() {
       const postId = getPostId();
       const commentId = getCommentId();
-
       let unixTimestamp = commentId
         ? extractUnixTimestamp(commentId)
         : extractUnixTimestamp(postId);
+
+      if (!unixTimestamp) return;
 
       document.querySelector("#localtime").textContent = unixTimestampToLocalDate(unixTimestamp);
       document.querySelector("#ettime").textContent = unixTimestampToETDate(unixTimestamp);
@@ -154,4 +217,3 @@
   </script>
 </body>
 </html>
-
