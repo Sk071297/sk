@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Post Date Extractor</title>
+<style>
+  :root {
+    --primary: #007bff;
+    --secondary: #5bc0de;
+    --light-blue: #e3f2fd;
+    --background: #f9fcff;
+    --text: #0d1b2a;
+    --error: #ff4d4f;
+    --glow: rgba(0, 123, 255, 0.5);
+  }
+
+  body {
+    margin: 0;
+    padding: 20px;
+    font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+    background: linear-gradient(135deg, var(--background), var(--light-blue));
+    color: var(--text);
+    overflow-x: hidden;
+  }
+
+  .container {
+    max-width: 720px;
+    margin: 40px auto;
+    background: white;
+    padding: 30px;
+    border-radius: 16px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+    transform: perspective(800px) rotateX(2deg);
+    animation: floatCard 5s ease-in-out infinite;
+  }
+
+  @keyframes floatCard {
+    0%, 100% { transform: perspective(800px) rotateX(2deg) translateY(0); }
+    50% { transform: perspective(800px) rotateX(2deg) translateY(-8px); }
+  }
+
+  h2 {
+    text-align: center;
+    color: var(--primary);
+    font-size: 2rem;
+    margin-bottom: 20px;
+    text-shadow: 0 0 10px var(--glow);
+  }
+
+  .platform-switch {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin-bottom: 25px;
+  }
+
+  .platform-btn {
+    flex: 1;
+    padding: 12px;
+    border: none;
+    border-radius: 50px;
+    background: var(--light-blue);
+    color: var(--primary);
+    font-weight: bold;
+    font-size: 16px;
+    cursor: pointer;
+    transition: 0.3s;
+    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.1);
+  }
+
+  .platform-btn.active {
+    background: var(--primary);
+    color: white;
+    transform: scale(1.05);
+    box-shadow: 0 0 12px var(--glow);
+  }
+
+  input[type="text"] {
+    width: 100%;
+    padding: 14px;
+    border: 2px solid var(--light-blue);
+    border-radius: 8px;
+    font-size: 16px;
+    transition: 0.3s;
+    box-shadow: 0 0 5px rgba(0, 123, 255, 0.2);
+  }
+
+  input[type="text"]:focus {
+    outline: none;
+    border-color: var(--primary);
+    box-shadow: 0 0 12px var(--glow);
+  }
+
+  .error {
+    display: none;
+    margin-top: 10px;
+    padding: 8px;
+    border-radius: 8px;
+    background: var(--error);
+    color: white;
+    font-weight: bold;
+    text-align: center;
+  }
+
+  .actions {
+    display: flex;
+    gap: 10px;
+    margin-top: 20px;
+  }
+
+  .btn {
+    flex: 1;
+    padding: 12px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: bold;
+    transition: 0.3s;
+  }
+
+  .btn-primary {
+    background: var(--primary);
+    color: white;
+    box-shadow: 0 4px 10px var(--glow);
+  }
+
+  .btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 14px var(--glow);
+  }
+
+  .btn-secondary {
+    background: var(--secondary);
+    color: white;
+  }
+
+  .btn-secondary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 14px rgba(91, 192, 222, 0.5);
+  }
+
+  .output {
+    margin-top: 20px;
+    padding: 15px;
+    border: 1px solid var(--light-blue);
+    border-radius: 10px;
+    background: var(--light-blue);
+    font-family: monospace;
+    font-size: 14px;
+    animation: fadeIn 0.5s ease-in-out;
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(5px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+</style>
+</head>
+<body>
+  <div class="container">
+    <h2>Post Date Extractor</h2>
+
+    <div class="platform-switch">
+      <button class="platform-btn active" id="twitterBtn" data-platform="twitter">Twitter/X</button>
+      <button class="platform-btn" id="linkedinBtn" data-platform="linkedin">LinkedIn</button>
+    </div>
+
+    <input type="text" id="urlInput" placeholder="Paste the post URL here..." />
+    <div class="error" id="errorBox">Invalid URL for the selected platform.</div>
+
+    <div class="actions">
+      <button class="btn btn-primary" id="extractBtn" disabled>Extract Date</button>
+      <button class="btn btn-secondary" id="clearBtn">Clear</button>
+    </div>
+
+    <div class="output" id="outputBox" style="display:none;">
+      <div>Platform: <span id="platformOut"></span></div>
+      <div>Post ID: <span id="postIdOut"></span></div>
+      <div>Local Time: <span id="localOut"></span></div>
+      <div>Eastern Time (ET): <span id="etOut"></span></div>
+    </div>
+  </div>
+
+<script>
+let currentPlatform = "twitter";
+const twitterRegex = /^https?:\/\/(?:www\.)?(?:twitter\.com|x\.com)\/[^\/]+\/status\/(\d+)/i;
+const linkedinRegex = /([0-9]{19})/;
+
+const urlInput = document.getElementById("urlInput");
+const extractBtn = document.getElementById("extractBtn");
+const errorBox = document.getElementById("errorBox");
+const outputBox = document.getElementById("outputBox");
+
+document.getElementById("twitterBtn").onclick = () => switchPlatform("twitter");
+document.getElementById("linkedinBtn").onclick = () => switchPlatform("linkedin");
+
+function switchPlatform(platform) {
+  currentPlatform = platform;
+  document.querySelectorAll(".platform-btn").forEach(btn => btn.classList.remove("active"));
+  document.querySelector(`[data-platform='${platform}']`).classList.add("active");
+  validateUrl();
+}
+
+urlInput.addEventListener("input", validateUrl);
+
+function validateUrl() {
+  const url = urlInput.value.trim();
+  let isValid = false;
+
+  if (currentPlatform === "twitter") {
+    isValid = twitterRegex.test(url);
+  } else if (currentPlatform === "linkedin") {
+    // Updated stricter LinkedIn regex
+    const linkedinFullRegex = /^https?:\/\/(?:[a-z]+\.)?linkedin\.com\/.*?(?:activity|posts)[^0-9]*([0-9]{10,20})/i;
+    isValid = linkedinFullRegex.test(url);
+  }
+
+  errorBox.style.display = isValid || !url ? "none" : "block";
+  extractBtn.disabled = !isValid;
+  return isValid;
+}
+
+function extractTwitterTimestamp(id) {
+  const epoch = 1288834974657n;
+  return Number((BigInt(id) >> 22n) + epoch);
+}
+
+function extractLinkedInTimestamp(id) {
+  if (!id) return "";
+  const binary = BigInt(id).toString(2);
+  return parseInt(binary.slice(0, 41), 2);
+}
+
+function formatDate(date, timeZone) {
+  return new Intl.DateTimeFormat("en-US", {
+    weekday: "short",
+    year: "numeric",
+    month: "short",
+    day: "2-digit",
+    hour: "2-digit",
+    minute: "2-digit",
+    second: "2-digit",
+    hour12: true,
+    timeZone,
+    timeZoneName: timeZone === "America/New_York" ? "short" : undefined
+  }).format(date);
+}
+
+extractBtn.onclick = () => {
+  const url = urlInput.value.trim();
+  if (!validateUrl()) return;
+
+  let postId, timestamp;
+  if (currentPlatform === "twitter") {
+    postId = url.match(twitterRegex)?.[1];
+    timestamp = extractTwitterTimestamp(postId);
+  } else {
+    postId = url.match(linkedinRegex)?.[1];
+    timestamp = extractLinkedInTimestamp(postId);
+  }
+
+  if (!timestamp) {
+    errorBox.textContent = "Unable to extract timestamp. Check the URL.";
+    errorBox.style.display = "block";
+    return;
+  }
+
+  document.getElementById("platformOut").textContent = currentPlatform === "twitter" ? "Twitter/X" : "LinkedIn";
+  document.getElementById("postIdOut").textContent = postId;
+  document.getElementById("localOut").textContent = formatDate(new Date(timestamp), Intl.DateTimeFormat().resolvedOptions().timeZone);
+  document.getElementById("etOut").textContent = formatDate(new Date(timestamp), "America/New_York");
+
+  outputBox.style.display = "block";
+};
+
+document.getElementById("clearBtn").onclick = () => {
+  urlInput.value = "";
+  errorBox.style.display = "none";
+  outputBox.style.display = "none";
+  extractBtn.disabled = true;
+};
+</script>
+</body>
+</html>
