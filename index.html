@@ -1,142 +1,71 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Social Media Finder</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Universal Social Media Finder</title>
   <style>
-    body {
-      font-family: Arial, sans-serif;
-      background: #f4f8fc;
-      padding: 20px;
-    }
-    .container {
-      max-width: 700px;
-      margin: 40px auto;
-      background: #fff;
-      padding: 25px;
-      border-radius: 10px;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-    }
-    h1 {
-      text-align: center;
-      color: #007bff;
-    }
-    input {
-      width: 100%;
-      padding: 14px;
-      font-size: 16px;
-      border: 2px solid #ddd;
-      border-radius: 6px;
-    }
-    .actions {
-      margin-top: 20px;
-      display: flex;
-      gap: 10px;
-    }
-    button {
-      flex: 1;
-      padding: 12px;
-      font-size: 16px;
-      border: none;
-      border-radius: 6px;
-      cursor: pointer;
-    }
-    .btn-primary { background: #007bff; color: white; }
-    .btn-secondary { background: #6c757d; color: white; }
-    .output {
-      margin-top: 25px;
-      padding: 15px;
-      background: #eef8ff;
-      border: 1px solid #cce5ff;
-      border-radius: 6px;
-      font-family: monospace;
-    }
-    .output-row {
-      margin: 8px 0;
-    }
+    body { font-family: Arial, sans-serif; background:#f4f8fc; padding:20px; }
+    .container { max-width:750px; margin:30px auto; background:#fff; padding:25px; border-radius:10px; box-shadow:0 4px 12px rgba(0,0,0,0.1);}
+    h1 { text-align:center; color:#007bff; }
+    label { font-weight:bold; margin-top:10px; display:block; }
+    input { width:100%; padding:12px; margin:5px 0 15px; border:2px solid #ddd; border-radius:6px; font-size:16px; }
+    button { padding:12px 18px; margin:8px 0; border:none; border-radius:6px; cursor:pointer; font-size:16px; background:#007bff; color:white; width:100%; }
+    .results { margin-top:20px; padding:15px; background:#eef8ff; border-radius:6px; }
+    a { display:block; margin:6px 0; text-decoration:none; color:#007bff; }
+    a:hover { text-decoration:underline; }
   </style>
 </head>
 <body>
   <div class="container">
-    <h1>🔎 Social Media Finder</h1>
+    <h1>🔎 Universal Social Media Finder</h1>
 
-    <input type="text" id="urlInput" placeholder="Paste any social media post/profile URL..." />
+    <label>Full Name</label>
+    <input type="text" id="name" placeholder="e.g. John Doe">
 
-    <div class="actions">
-      <button class="btn-primary" id="analyzeBtn">Analyze</button>
-      <button class="btn-secondary" id="clearBtn">Clear</button>
-    </div>
+    <label>Location</label>
+    <input type="text" id="location" placeholder="e.g. New York">
 
-    <div class="output" id="outputBox" style="display:none;">
-      <div class="output-row">🌐 Platform: <span id="platformOut"></span></div>
-      <div class="output-row">🆔 ID/Username: <span id="idOut"></span></div>
-      <div class="output-row" id="extraRow" style="display:none;">📅 Extra Info: <span id="extraOut"></span></div>
-    </div>
+    <label>Career / Profession</label>
+    <input type="text" id="career" placeholder="e.g. Software Engineer">
+
+    <label>Current Company</label>
+    <input type="text" id="company" placeholder="e.g. Google">
+
+    <button onclick="findProfiles()">Find Profiles</button>
+
+    <div class="results" id="results" style="display:none;"></div>
   </div>
 
 <script>
-const urlInput = document.getElementById("urlInput");
-const analyzeBtn = document.getElementById("analyzeBtn");
-const outputBox = document.getElementById("outputBox");
+function findProfiles() {
+  const name = document.getElementById("name").value.trim();
+  const location = document.getElementById("location").value.trim();
+  const career = document.getElementById("career").value.trim();
+  const company = document.getElementById("company").value.trim();
 
-function detectPlatform(url) {
-  if (/twitter\.com|x\.com/i.test(url)) return "Twitter/X";
-  if (/linkedin\.com/i.test(url)) return "LinkedIn";
-  if (/facebook\.com/i.test(url)) return "Facebook";
-  if (/instagram\.com/i.test(url)) return "Instagram";
-  if (/youtube\.com|youtu\.be/i.test(url)) return "YouTube";
-  return "Unknown";
-}
+  if (!name) return alert("Please enter at least a name");
 
-function extractInfo(url, platform) {
-  let id = "N/A", extra = "";
+  const query = `"${name}" "${location}" "${career}" "${company}"`;
 
-  switch(platform) {
-    case "Twitter/X":
-      id = url.match(/status\/(\d+)/)?.[1] || "Profile/Other";
-      break;
-    case "LinkedIn":
-      id = url.match(/(?:activity|posts)\/(\d{10,20})/)?.[1] || "Profile/Other";
-      break;
-    case "Facebook":
-      id = url.match(/facebook\.com\/([^/?]+)/)?.[1] || "Profile/Page";
-      break;
-    case "Instagram":
-      id = url.match(/instagram\.com\/([^/?]+)/)?.[1] || "Profile/Post";
-      break;
-    case "YouTube":
-      id = url.match(/(?:v=|youtu\.be\/)([^&?/]+)/)?.[1] || "Channel/Other";
-      break;
+  const searches = {
+    "LinkedIn": `https://www.google.com/search?q=${encodeURIComponent(query + ' site:linkedin.com/in')}`,
+    "Facebook": `https://www.google.com/search?q=${encodeURIComponent(query + ' site:facebook.com')}`,
+    "Twitter/X": `https://www.google.com/search?q=${encodeURIComponent(query + ' site:twitter.com')}`,
+    "Instagram": `https://www.google.com/search?q=${encodeURIComponent(query + ' site:instagram.com')}`,
+    "Threads": `https://www.google.com/search?q=${encodeURIComponent(query + ' site:threads.net')}`,
+    "Bluesky": `https://www.google.com/search?q=${encodeURIComponent(query + ' site:bsky.app')}`,
+    "YouTube": `https://www.google.com/search?q=${encodeURIComponent(query + ' site:youtube.com')}`
+  };
+
+  let html = "<h3>🔗 Search Results</h3>";
+  for (const [platform, url] of Object.entries(searches)) {
+    html += `<a href="${url}" target="_blank">Search on ${platform}</a>`;
   }
 
-  return { id, extra };
+  document.getElementById("results").style.display = "block";
+  document.getElementById("results").innerHTML = html;
 }
-
-analyzeBtn.onclick = () => {
-  const url = urlInput.value.trim();
-  if (!url) return;
-
-  const platform = detectPlatform(url);
-  const {id, extra} = extractInfo(url, platform);
-
-  document.getElementById("platformOut").textContent = platform;
-  document.getElementById("idOut").textContent = id;
-  
-  if (extra) {
-    document.getElementById("extraRow").style.display = "block";
-    document.getElementById("extraOut").textContent = extra;
-  } else {
-    document.getElementById("extraRow").style.display = "none";
-  }
-
-  outputBox.style.display = "block";
-};
-
-document.getElementById("clearBtn").onclick = () => {
-  urlInput.value = "";
-  outputBox.style.display = "none";
-};
 </script>
 </body>
 </html>
