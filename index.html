@@ -3,40 +3,18 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-
-  <!-- SEO Meta Tags -->
-  <title>LinkedIn Post Date Extractor | Free Tool</title>
-  <meta name="description" content="Free tool to find the publish date & time of a LinkedIn post. Just paste the URL and see local time & Eastern Time (ET)." />
-  <meta name="keywords" content="LinkedIn post date, LinkedIn timestamp, LinkedIn extractor, social media tool" />
-  <link rel="canonical" href="https://sk071297.github.io/sk/" />
-
-  <!-- Open Graph / Twitter Card -->
-  <meta property="og:title" content="LinkedIn Post Date Extractor" />
-  <meta property="og:description" content="Paste a LinkedIn post URL to extract its publish date & time." />
-  <meta property="og:type" content="website" />
-  <meta property="og:url" content="https://sk071297.github.io/sk/" />
-  <meta property="og:image" content="https://sk071297.github.io/sk/preview.png" />
-
-  <meta name="twitter:card" content="summary_large_image" />
-  <meta name="twitter:title" content="LinkedIn Post Date Extractor" />
-  <meta name="twitter:description" content="Extract publish date & time from LinkedIn posts instantly." />
-  <meta name="twitter:image" content="https://sk071297.github.io/sk/preview.png" />
-
-  <meta name="robots" content="index, follow" />
-
+  <title>Social Media Finder</title>
   <style>
     body {
-      margin: 0;
-      padding: 20px;
       font-family: Arial, sans-serif;
       background: #f4f8fc;
-      color: #333;
+      padding: 20px;
     }
     .container {
       max-width: 700px;
-      margin: 50px auto;
+      margin: 40px auto;
       background: #fff;
-      padding: 30px;
+      padding: 25px;
       border-radius: 10px;
       box-shadow: 0 4px 12px rgba(0,0,0,0.1);
     }
@@ -44,18 +22,12 @@
       text-align: center;
       color: #007bff;
     }
-    input[type="text"] {
+    input {
       width: 100%;
       padding: 14px;
-      margin-top: 20px;
+      font-size: 16px;
       border: 2px solid #ddd;
       border-radius: 6px;
-      font-size: 16px;
-    }
-    .error {
-      display: none;
-      margin-top: 10px;
-      color: #d9534f;
     }
     .actions {
       margin-top: 20px;
@@ -70,18 +42,12 @@
       border-radius: 6px;
       cursor: pointer;
     }
-    .btn-primary {
-      background: #007bff;
-      color: white;
-    }
-    .btn-secondary {
-      background: #6c757d;
-      color: white;
-    }
+    .btn-primary { background: #007bff; color: white; }
+    .btn-secondary { background: #6c757d; color: white; }
     .output {
       margin-top: 25px;
       padding: 15px;
-      background: #e9f5ff;
+      background: #eef8ff;
       border: 1px solid #cce5ff;
       border-radius: 6px;
       font-family: monospace;
@@ -89,141 +55,88 @@
     .output-row {
       margin: 8px 0;
     }
-    .about-tool {
-      margin-top: 40px;
-      line-height: 1.6;
-    }
-    .about-tool h2 {
-      margin-top: 30px;
-      color: #007bff;
-    }
-    .about-tool ul {
-      list-style: disc inside;
-    }
-    .about-tool code {
-      background: #f8f8f8;
-      padding: 2px 5px;
-      border-radius: 3px;
-    }
   </style>
 </head>
 <body>
   <div class="container">
-    <h1>LinkedIn Post Date Extractor</h1>
+    <h1>🔎 Social Media Finder</h1>
 
-    <input type="text" id="urlInput" placeholder="Paste LinkedIn post URL here..." />
-    <div class="error" id="errorBox">Invalid LinkedIn post URL.</div>
+    <input type="text" id="urlInput" placeholder="Paste any social media post/profile URL..." />
 
     <div class="actions">
-      <button class="btn btn-primary" id="extractBtn" disabled>Extract Date</button>
-      <button class="btn btn-secondary" id="clearBtn">Clear</button>
+      <button class="btn-primary" id="analyzeBtn">Analyze</button>
+      <button class="btn-secondary" id="clearBtn">Clear</button>
     </div>
 
-    <div class="output" id="outputBox" style="display: none;">
-      <div class="output-row">🆔 Post ID: <span id="postIdOut"></span></div>
-      <div class="output-row">🕒 Local Time: <span id="localOut"></span></div>
-      <div class="output-row">🗽 Eastern Time (ET): <span id="etOut"></span></div>
+    <div class="output" id="outputBox" style="display:none;">
+      <div class="output-row">🌐 Platform: <span id="platformOut"></span></div>
+      <div class="output-row">🆔 ID/Username: <span id="idOut"></span></div>
+      <div class="output-row" id="extraRow" style="display:none;">📅 Extra Info: <span id="extraOut"></span></div>
     </div>
-
-    <section class="about-tool">
-      <h2>About This Tool</h2>
-      <p>
-        This tool helps you find the exact publish date & time of a LinkedIn post. Paste the LinkedIn post URL above and hit “Extract Date” to see the time in your local timezone and in Eastern Time (ET).
-      </p>
-
-      <h2>How It Works</h2>
-      <ul>
-        <li>Extracts the 19-digit post ID from the URL.</li>
-        <li>Converts the ID to binary and reads bits representing the timestamp.</li>
-      </ul>
-
-      <h2>Why Use It?</h2>
-      <ul>
-        <li>No login required</li>
-        <li>Privacy-friendly — works entirely in your browser</li>
-        <li>Useful for research, audits, analytics</li>
-      </ul>
-
-      <h2>Example URL</h2>
-      <p>
-        <code>https://www.linkedin.com/feed/update/urn:li:activity:1234567890123456789/</code>
-      </p>
-    </section>
   </div>
 
-  <script>
-    const linkedinRegex = /^https?:\/\/(?:[a-z]+\.)?linkedin\.com\/.*?(\d{10,20})/i;
-    const urlInput = document.getElementById("urlInput");
-    const extractBtn = document.getElementById("extractBtn");
-    const errorBox = document.getElementById("errorBox");
-    const outputBox = document.getElementById("outputBox");
+<script>
+const urlInput = document.getElementById("urlInput");
+const analyzeBtn = document.getElementById("analyzeBtn");
+const outputBox = document.getElementById("outputBox");
 
-    urlInput.addEventListener("input", () => {
-      const url = urlInput.value.trim();
-      const match = url.match(linkedinRegex);
-      if (match) {
-        errorBox.style.display = "none";
-        extractBtn.disabled = false;
-      } else {
-        extractBtn.disabled = true;
-        if (url.length > 0) {
-          errorBox.style.display = "block";
-        } else {
-          errorBox.style.display = "none";
-        }
-      }
-    });
+function detectPlatform(url) {
+  if (/twitter\.com|x\.com/i.test(url)) return "Twitter/X";
+  if (/linkedin\.com/i.test(url)) return "LinkedIn";
+  if (/facebook\.com/i.test(url)) return "Facebook";
+  if (/instagram\.com/i.test(url)) return "Instagram";
+  if (/youtube\.com|youtu\.be/i.test(url)) return "YouTube";
+  return "Unknown";
+}
 
-    function extractLinkedInTimestamp(id) {
-      if (!id) return null;
-      const binary = BigInt(id).toString(2);
-      // Using first 41 bits (as earlier) — adjust if needed
-      const timestampBits = binary.slice(0, 41);
-      return parseInt(timestampBits, 2);
-    }
+function extractInfo(url, platform) {
+  let id = "N/A", extra = "";
 
-    function formatDate(date, timeZone) {
-      return new Intl.DateTimeFormat("en-US", {
-        weekday: "short",
-        year: "numeric",
-        month: "short",
-        day: "2-digit",
-        hour: "2-digit",
-        minute: "2-digit",
-        second: "2-digit",
-        hour12: true,
-        timeZone,
-        timeZoneName: timeZone === "America/New_York" ? "short" : undefined
-      }).format(date);
-    }
+  switch(platform) {
+    case "Twitter/X":
+      id = url.match(/status\/(\d+)/)?.[1] || "Profile/Other";
+      break;
+    case "LinkedIn":
+      id = url.match(/(?:activity|posts)\/(\d{10,20})/)?.[1] || "Profile/Other";
+      break;
+    case "Facebook":
+      id = url.match(/facebook\.com\/([^/?]+)/)?.[1] || "Profile/Page";
+      break;
+    case "Instagram":
+      id = url.match(/instagram\.com\/([^/?]+)/)?.[1] || "Profile/Post";
+      break;
+    case "YouTube":
+      id = url.match(/(?:v=|youtu\.be\/)([^&?/]+)/)?.[1] || "Channel/Other";
+      break;
+  }
 
-    extractBtn.onclick = () => {
-      const url = urlInput.value.trim();
-      const match = url.match(linkedinRegex);
-      if (!match) return;
+  return { id, extra };
+}
 
-      const postId = match[1];
-      const ts = extractLinkedInTimestamp(postId);
-      if (!ts) {
-        errorBox.textContent = "Unable to extract timestamp.";
-        errorBox.style.display = "block";
-        return;
-      }
+analyzeBtn.onclick = () => {
+  const url = urlInput.value.trim();
+  if (!url) return;
 
-      const dateObj = new Date(ts);
-      document.getElementById("postIdOut").textContent = postId;
-      document.getElementById("localOut").textContent = formatDate(dateObj, Intl.DateTimeFormat().resolvedOptions().timeZone);
-      document.getElementById("etOut").textContent = formatDate(dateObj, "America/New_York");
+  const platform = detectPlatform(url);
+  const {id, extra} = extractInfo(url, platform);
 
-      outputBox.style.display = "block";
-    };
+  document.getElementById("platformOut").textContent = platform;
+  document.getElementById("idOut").textContent = id;
+  
+  if (extra) {
+    document.getElementById("extraRow").style.display = "block";
+    document.getElementById("extraOut").textContent = extra;
+  } else {
+    document.getElementById("extraRow").style.display = "none";
+  }
 
-    document.getElementById("clearBtn").onclick = () => {
-      urlInput.value = "";
-      errorBox.style.display = "none";
-      outputBox.style.display = "none";
-      extractBtn.disabled = true;
-    };
-  </script>
+  outputBox.style.display = "block";
+};
+
+document.getElementById("clearBtn").onclick = () => {
+  urlInput.value = "";
+  outputBox.style.display = "none";
+};
+</script>
 </body>
 </html>
