@@ -1,176 +1,189 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>LinkedIn Post Date Extractor</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <!-- SEO Meta Tags -->
+  <title>LinkedIn Post Date Extractor | Free Tool</title>
+  <meta name="description" content="Free tool to find the publish date & time of a LinkedIn post. Just paste the URL and see local time & Eastern Time (ET)." />
+  <meta name="keywords" content="LinkedIn post date, LinkedIn timestamp, LinkedIn extractor, social media tool" />
+  <link rel="canonical" href="https://sk071297.github.io/sk/" />
+
+  <!-- Open Graph / Twitter Card -->
+  <meta property="og:title" content="LinkedIn Post Date Extractor" />
+  <meta property="og:description" content="Paste a LinkedIn post URL to extract its publish date & time." />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://sk071297.github.io/sk/" />
+  <meta property="og:image" content="https://sk071297.github.io/sk/preview.png" />
+
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="LinkedIn Post Date Extractor" />
+  <meta name="twitter:description" content="Extract publish date & time from LinkedIn posts instantly." />
+  <meta name="twitter:image" content="https://sk071297.github.io/sk/preview.png" />
+
+  <meta name="robots" content="index, follow" />
+
   <style>
     body {
       margin: 0;
-      padding: 0;
-      font-family: "Segoe UI", Roboto, Arial, sans-serif;
-      background: linear-gradient(270deg, #ff6ec7, #ff9800, #00e5ff, #7c4dff);
-      background-size: 800% 800%;
-      animation: gradientBG 15s ease infinite;
-      color: #fff;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      min-height: 100vh;
-      padding: 2em;
+      padding: 20px;
+      font-family: Arial, sans-serif;
+      background: #f4f8fc;
+      color: #333;
     }
-
-    @keyframes gradientBG {
-      0% { background-position: 0% 50%; }
-      50% { background-position: 100% 50%; }
-      100% { background-position: 0% 50%; }
-    }
-
-    h1 {
-      font-size: 2.5em;
-      margin-bottom: 1em;
-      text-align: center;
-      background: linear-gradient(90deg, #ffeb3b, #ff5722, #00e676);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      animation: glowText 2s infinite alternate;
-    }
-
-    @keyframes glowText {
-      from { text-shadow: 0 0 5px rgba(255,255,255,0.5); }
-      to { text-shadow: 0 0 20px rgba(255,255,255,0.9); }
-    }
-
     .container {
-      background: rgba(0, 0, 0, 0.5);
-      backdrop-filter: blur(10px);
-      padding: 30px;
-      border-radius: 20px;
-      box-shadow: 0 0 20px rgba(255,255,255,0.2);
       max-width: 700px;
-      width: 100%;
-      animation: fadeIn 0.6s ease;
-    }
-
-    .form {
-      display: flex;
-      gap: 12px;
-      margin-bottom: 1.8em;
-    }
-
-    input[type="text"] {
-      flex: 1;
-      padding: 14px;
+      margin: 50px auto;
+      background: #fff;
+      padding: 30px;
       border-radius: 10px;
-      border: none;
-      font-size: 16px;
-      color: #fff;
-      background: rgba(255,255,255,0.15);
-      box-shadow: inset 0 0 8px rgba(255,255,255,0.2);
-      outline: none;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
     }
-
+    h1 {
+      text-align: center;
+      color: #007bff;
+    }
+    input[type="text"] {
+      width: 100%;
+      padding: 14px;
+      margin-top: 20px;
+      border: 2px solid #ddd;
+      border-radius: 6px;
+      font-size: 16px;
+    }
+    .error {
+      display: none;
+      margin-top: 10px;
+      color: #d9534f;
+    }
+    .actions {
+      margin-top: 20px;
+      display: flex;
+      gap: 10px;
+    }
     button {
-      background: linear-gradient(135deg, #ff9800, #ff5722, #ff6ec7);
-      color: white;
-      padding: 12px 20px;
-      border: none;
-      border-radius: 12px;
+      flex: 1;
+      padding: 12px;
       font-size: 16px;
-      font-weight: bold;
+      border: none;
+      border-radius: 6px;
       cursor: pointer;
-      transition: transform 0.3s ease, box-shadow 0.3s ease;
-      box-shadow: 0 0 10px rgba(255, 87, 34, 0.6);
     }
-
-    button:hover {
-      transform: scale(1.1);
-      box-shadow: 0 0 25px rgba(255, 87, 34, 0.9);
+    .btn-primary {
+      background: #007bff;
+      color: white;
     }
-
+    .btn-secondary {
+      background: #6c757d;
+      color: white;
+    }
     .output {
-      display: grid;
-      gap: 16px;
+      margin-top: 25px;
+      padding: 15px;
+      background: #e9f5ff;
+      border: 1px solid #cce5ff;
+      border-radius: 6px;
+      font-family: monospace;
     }
-
-    .card {
-      background: linear-gradient(135deg, #ff4081, #7c4dff, #00e5ff);
-      background-size: 300% 300%;
-      animation: cardBG 6s ease infinite;
-      padding: 18px 22px;
-      border-radius: 14px;
-      box-shadow: 0 0 15px rgba(255,255,255,0.3);
-      transition: transform 0.2s;
+    .output-row {
+      margin: 8px 0;
     }
-
-    @keyframes cardBG {
-      0% { background-position: 0% 50%; }
-      50% { background-position: 100% 50%; }
-      100% { background-position: 0% 50%; }
+    .about-tool {
+      margin-top: 40px;
+      line-height: 1.6;
     }
-
-    .card:hover {
-      transform: translateY(-3px) scale(1.02);
+    .about-tool h2 {
+      margin-top: 30px;
+      color: #007bff;
     }
-
-    .label {
-      font-weight: bold;
-      font-size: 1.1em;
-      color: #fffde7;
-      display: block;
-      margin-bottom: 6px;
-      text-shadow: 0 0 6px rgba(255,255,255,0.7);
+    .about-tool ul {
+      list-style: disc inside;
     }
-
-    @keyframes fadeIn {
-      from {opacity: 0; transform: translateY(10px);}
-      to {opacity: 1; transform: translateY(0);}
+    .about-tool code {
+      background: #f8f8f8;
+      padding: 2px 5px;
+      border-radius: 3px;
     }
   </style>
 </head>
 <body>
-  <h1>LinkedIn Post Date Extractor</h1>
   <div class="container">
-    <div class="form">
-      <input type="text" id="url" name="url" placeholder="Paste LinkedIn Post or Comment URL here..." />
-      <button onclick="getDate()">Extract</button>
-      <button onclick="clearUrlField()">Clear</button>
+    <h1>LinkedIn Post Date Extractor</h1>
+
+    <input type="text" id="urlInput" placeholder="Paste LinkedIn post URL here..." />
+    <div class="error" id="errorBox">Invalid LinkedIn post URL.</div>
+
+    <div class="actions">
+      <button class="btn btn-primary" id="extractBtn" disabled>Extract Date</button>
+      <button class="btn btn-secondary" id="clearBtn">Clear</button>
     </div>
-    <div class="output">
-      <div class="card">
-        <span class="label">Uploaded on (Local):</span>
-        <span id="localtime"></span>
-      </div>
-      <div class="card">
-        <span class="label">Eastern Time (ET):</span>
-        <span id="ettime"></span>
-      </div>
+
+    <div class="output" id="outputBox" style="display: none;">
+      <div class="output-row">🆔 Post ID: <span id="postIdOut"></span></div>
+      <div class="output-row">🕒 Local Time: <span id="localOut"></span></div>
+      <div class="output-row">🗽 Eastern Time (ET): <span id="etOut"></span></div>
     </div>
+
+    <section class="about-tool">
+      <h2>About This Tool</h2>
+      <p>
+        This tool helps you find the exact publish date & time of a LinkedIn post. Paste the LinkedIn post URL above and hit “Extract Date” to see the time in your local timezone and in Eastern Time (ET).
+      </p>
+
+      <h2>How It Works</h2>
+      <ul>
+        <li>Extracts the 19-digit post ID from the URL.</li>
+        <li>Converts the ID to binary and reads bits representing the timestamp.</li>
+      </ul>
+
+      <h2>Why Use It?</h2>
+      <ul>
+        <li>No login required</li>
+        <li>Privacy-friendly — works entirely in your browser</li>
+        <li>Useful for research, audits, analytics</li>
+      </ul>
+
+      <h2>Example URL</h2>
+      <p>
+        <code>https://www.linkedin.com/feed/update/urn:li:activity:1234567890123456789/</code>
+      </p>
+    </section>
   </div>
 
   <script>
-    function getPostId() {
-      const linkedinURL = document.querySelector("#url").value;
-      const regex = /([0-9]{19})/;
-      return regex.exec(linkedinURL)?.pop();
-    }
+    const linkedinRegex = /^https?:\/\/(?:[a-z]+\.)?linkedin\.com\/.*?(\d{10,20})/i;
+    const urlInput = document.getElementById("urlInput");
+    const extractBtn = document.getElementById("extractBtn");
+    const errorBox = document.getElementById("errorBox");
+    const outputBox = document.getElementById("outputBox");
 
-    function getCommentId() {
-      const linkedinURL = decodeURIComponent(document.querySelector("#url").value);
-      const regex = /fsd_comment:\((\d+),urn:li:activity:\d+\)/;
-      const match = regex.exec(linkedinURL);
-      return match ? match[1] : null;
-    }
+    urlInput.addEventListener("input", () => {
+      const url = urlInput.value.trim();
+      const match = url.match(linkedinRegex);
+      if (match) {
+        errorBox.style.display = "none";
+        extractBtn.disabled = false;
+      } else {
+        extractBtn.disabled = true;
+        if (url.length > 0) {
+          errorBox.style.display = "block";
+        } else {
+          errorBox.style.display = "none";
+        }
+      }
+    });
 
-    function extractUnixTimestamp(postId) {
-      if (!postId) return "";
-      const asBinary = BigInt(postId).toString(2);
-      const first41Chars = asBinary.slice(0, 41);
-      return parseInt(first41Chars, 2);
+    function extractLinkedInTimestamp(id) {
+      if (!id) return null;
+      const binary = BigInt(id).toString(2);
+      // Using first 41 bits (as earlier) — adjust if needed
+      const timestampBits = binary.slice(0, 41);
+      return parseInt(timestampBits, 2);
     }
 
     function formatDate(date, timeZone) {
-      const options = {
+      return new Intl.DateTimeFormat("en-US", {
         weekday: "short",
         year: "numeric",
         month: "short",
@@ -181,39 +194,36 @@
         hour12: true,
         timeZone,
         timeZoneName: timeZone === "America/New_York" ? "short" : undefined
-      };
-      return new Intl.DateTimeFormat("en-US", options).format(date);
+      }).format(date);
     }
 
-    function unixTimestampToLocalDate(timestamp) {
-      const dateObject = new Date(timestamp);
-      return formatDate(dateObject, Intl.DateTimeFormat().resolvedOptions().timeZone);
-    }
+    extractBtn.onclick = () => {
+      const url = urlInput.value.trim();
+      const match = url.match(linkedinRegex);
+      if (!match) return;
 
-    function unixTimestampToETDate(timestamp) {
-      const dateObject = new Date(timestamp);
-      return formatDate(dateObject, "America/New_York");
-    }
+      const postId = match[1];
+      const ts = extractLinkedInTimestamp(postId);
+      if (!ts) {
+        errorBox.textContent = "Unable to extract timestamp.";
+        errorBox.style.display = "block";
+        return;
+      }
 
-    function getDate() {
-      const postId = getPostId();
-      const commentId = getCommentId();
-      let unixTimestamp = commentId
-        ? extractUnixTimestamp(commentId)
-        : extractUnixTimestamp(postId);
+      const dateObj = new Date(ts);
+      document.getElementById("postIdOut").textContent = postId;
+      document.getElementById("localOut").textContent = formatDate(dateObj, Intl.DateTimeFormat().resolvedOptions().timeZone);
+      document.getElementById("etOut").textContent = formatDate(dateObj, "America/New_York");
 
-      if (!unixTimestamp) return;
+      outputBox.style.display = "block";
+    };
 
-      document.querySelector("#localtime").textContent = unixTimestampToLocalDate(unixTimestamp);
-      document.querySelector("#ettime").textContent = unixTimestampToETDate(unixTimestamp);
-    }
-
-    function clearUrlField() {
-      document.querySelector("#url").value = "";
-      document.querySelector("#url").focus();
-      document.querySelector("#localtime").textContent = "";
-      document.querySelector("#ettime").textContent = "";
-    }
+    document.getElementById("clearBtn").onclick = () => {
+      urlInput.value = "";
+      errorBox.style.display = "none";
+      outputBox.style.display = "none";
+      extractBtn.disabled = true;
+    };
   </script>
 </body>
 </html>
